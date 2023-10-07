@@ -1,0 +1,25 @@
+# Python related
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+*.so
+
+# Django related
+*.log
+*.pot
+*~
+*#
+db.sqlite3
+
+# virtual environment (venv)
+venv/
+ENV/
+env/
+myenv/
+
+# PyCharm related (optional)
+.idea/
+
+#information related
+.env
