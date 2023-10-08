@@ -11,6 +11,6 @@ from django.utils.decorators import method_decorator
 # Create your views here.
 
 
-# return HttpResponse("HttpResponse : /home/templates/welcome_home.html.")
+# return HttpResponse("HttpResponse : /home/templates/home.html.")
 def main_home(request):
-    return render(request, 'main_home.html')
+    return render(request, 'home.html')

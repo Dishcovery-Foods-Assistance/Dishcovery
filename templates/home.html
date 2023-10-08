@@ -6,6 +6,32 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static '/css/style.css' %}?after" />
+    <title>Dishcovery</title>
+
+    <script type="text/javascript"></script>
   </head>
-  <body></body>
+  <body>
+    <header>
+      <h1>Dishcovery</h1>
+      <div class="search">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Enter an ingredient..."
+        />
+        <button id="searchButton">Search</button>
+      </div>
+    </header>
+
+    <div id="mealList" class="meal-list"></div>
+    <div class="modal-container">
+      <button id="recipeCloseBtn" class="close-button">&times;</button>
+      <div class="meal-details-content">
+        <!-- Content from js will be inserted here -->
+      </div>
+    </div>
+
+    <script></script>
+  </body>
 </html>
