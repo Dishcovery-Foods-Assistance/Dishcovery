@@ -25,5 +25,6 @@ app_name = 'home'
 
 urlpatterns = [
     path('', views.main_home, name='main_home'),
+    path('search/', views.search, name='search'),
     #    path('logIn', views.logIn),
 ]
