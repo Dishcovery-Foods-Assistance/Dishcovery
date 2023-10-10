@@ -8,8 +8,8 @@ load_dotenv()
 
 
 def food_search(category, keyword):
-    conn = pymysql.connect(host=os.getenv('DB_HOST'), user=os.getenv('DB_USER'),
-                           password=os.getenv('DB_PASSWORD'), db=os.getenv('DB_NAME'), charset='utf8')
+    conn = pymysql.connect(host=os.getenv('DB_HOST'), user=os.getenv(
+        'DB_USER'), password=os.getenv('DB_PASSWORD'), db=os.getenv('DB_NAME'), charset='utf8')
     cur = conn.cursor()
     sql = "SELECT `F_Name`, `F_Method`, `F_type` from food where "
     if category == "name":
