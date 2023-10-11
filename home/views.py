@@ -86,10 +86,11 @@ def foodDetail(request):
         url = os.getenv('FOOD_URL') + recipe_name
 
         rcp = rcpHandler(url)
-        rcp_row = rcp['row']
-        #if rcp['total_count'] == '0':
-        #    return JsonResponse({'message': msg}, status=400)
+        if rcp['total_count'] == '0':
+            result = rcp['RESULT']
+            return JsonResponse({'message': result['MSG']}, status=400)
 
+        rcp_row = rcp['row']
         nutritionList = []
         recipeList = []
         for row in rcp_row:
