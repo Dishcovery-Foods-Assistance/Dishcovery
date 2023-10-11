@@ -50,14 +50,20 @@ def rcpHandler(url):
 def apiSearch(request):
     if (request.method == 'GET'):
         recipe_name = request.GET.get('keyword')
+        if not recipe_name:
+            return JsonResponse({'message': 'NO_KEY'}, status=400)
         url = os.getenv('FOOD_URL') + recipe_name
 
         rcp = rcpHandler(url)
         result = rcp['RESULT']
         msg = result['MSG']
-        count = rcp['total_count']
-        rcp_row = rcp['row']
 
+        if rcp['total_count'] == '0':
+            return JsonResponse({'message': msg}, status=400)
+        else:
+            count = rcp['total_count']
+
+        rcp_row = rcp['row']
         rowsList = []
         for row in rcp_row:
             name = row.get('RCP_NM', None)
@@ -75,10 +81,14 @@ def foodDetail(request):
     if (request.method == 'GET'):
         recipe_name = request.GET.get('keyword')
         recipe_seq = request.GET.get('seq')
+        if not recipe_name or not recipe_seq:
+            return JsonResponse({'message': 'NO_KEY'}, status=400)
         url = os.getenv('FOOD_URL') + recipe_name
 
         rcp = rcpHandler(url)
         rcp_row = rcp['row']
+        #if rcp['total_count'] == '0':
+        #    return JsonResponse({'message': msg}, status=400)
 
         nutritionList = []
         recipeList = []
@@ -106,7 +116,8 @@ def foodDetail(request):
                         recipe[f'만드는법_이미지_{i:02}'] = img
                 recipe['저감 조리법 TIP'] = tip
                 recipeList.append(recipe)
-
+        if not recipeList:
+            return JsonResponse({'message': 'NO_MATCHING_SEQ'}, status=400)
         return JsonResponse({'메뉴명': name, '영양성분': nutritionList, '레시피': recipeList}, status=200)
     else:
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=400)
