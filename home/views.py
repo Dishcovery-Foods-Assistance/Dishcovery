@@ -6,7 +6,8 @@ import requests
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-
+from django.http import HttpResponse
+from django.views import View
 from home import models
 
 
@@ -19,6 +20,40 @@ from home import models
 # return HttpResponse("HttpResponse : /home/templates/home.html.")
 def main_home(request):
     return render(request, 'main_home.html')
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+def kakaoLogin(request):
+    if (request.method == 'GET'):
+        url = os.getenv('KAKAO_URL')
+        return JsonResponse({'message': 'SUCCESS', 'result': url}, status=200)
+    else:
+        return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=400)
+
+
+class KakaoCallbackView(View):
+    def get(self, request, *args, **kwargs):
+        code = request.GET.get('code', '')
+
+        data = {
+            "grant_type": 'authorization_code',
+            "client_id": os.getenv('KAKAO_KEY'),
+            "redirection_url": os.getenv('REDIRECT_URL'),
+            "code": code
+        }
+        kakao_token_api = "https://kauth.kakao.com/oauth/token"
+        access_token = requests.post(kakao_token_api, data=data).json()["access_token"]
+
+        kakao_user_api = "https://kapi.kakao.com/v2/user/me"
+        header = {"Authorization": f"Bearer ${access_token}"}
+        user_information = requests.get(kakao_user_api, headers=header).json()
+        kakao_id = user_information["id"]
+        kakao_nickname = user_information["properties"]["nickname"]
+
+        models.saveUserInfo(kakao_id, kakao_nickname)
+
+        return JsonResponse({'message': 'SUCCESS'}, status=200)
+        #여기서 success 말고 토큰 발급 구현 필요
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -40,7 +75,7 @@ def dbSearch(request):
 def rcpHandler(url):
     response = requests.get(url)
     if response.status_code != 200:
-        return JsonResponse({'message': 'API_ERR'}, status=400)
+        return JsonResponse({'message': 'API_ERR'}, status=response.status_code)
     res = json.loads(response.text)
     rcp = res['COOKRCP01']
     return rcp

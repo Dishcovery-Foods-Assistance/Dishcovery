@@ -24,6 +24,8 @@ urlpatterns = [
     path('', views.main_home, name='main_home'),
     path('search/', views.dbSearch, name='search'),
     path('recipe/', views.apiSearch, name='recipe'),
-    path('recipe/detail/', views.foodDetail, name='detail')
+    path('recipe/detail/', views.foodDetail, name='detail'),
+    path('kakao/', views.kakaoLogin, name='login'),
+    path('kakao/callback/', views.KakaoCallbackView.as_view(), name='kakao_callback')
     #    path('logIn', views.logIn),
 ]
