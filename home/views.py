@@ -19,7 +19,7 @@ from home import models
 
 # return HttpResponse("HttpResponse : /home/templates/home.html.")
 def main_home(request):
-    return render(request, 'main_home.html')
+    return render(request, 'home.html')
 
 
 @method_decorator(csrf_exempt, name='dispatch')
