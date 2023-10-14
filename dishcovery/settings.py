@@ -23,7 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
     os.path.join(BASE_DIR, 'static/css'),
+    os.path.join(BASE_DIR, 'static/image'),
+    
 ]
+
 
 
 # Quick-start development settings - unsuitable for production

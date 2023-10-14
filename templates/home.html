@@ -1,37 +1,38 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{% static '/css/style.css' %}?after" />
-    <title>Dishcovery</title>
 
-    <script type="text/javascript"></script>
-  </head>
-  <body>
-    <header>
-      <h1>Dishcovery</h1>
-      <div class="search">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Enter an ingredient..."
-        />
-        <button id="searchButton">Search</button>
-      </div>
-    </header>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{% static '/css/style.css' %}?after" />
+  <title>Dishcovery</title>
 
-    <div id="mealList" class="meal-list"></div>
-    <div class="modal-container">
-      <button id="recipeCloseBtn" class="close-button">&times;</button>
-      <div class="meal-details-content">
-        <!-- Content from js will be inserted here -->
-      </div>
+  <script type="text/javascript"></script>
+</head>
+
+<body>
+  <header>
+    <h1>Dishcovery</h1>
+    <img src="{% static 'image/plate.png' %}" style="vertical-align: middle;" width="250px" height="250px" >
+    <div class="search">
+      <input type="text" id="searchInput" placeholder="Enter an ingredient..." />
+      <button id="searchButton">Search</button>
     </div>
+  </header>
 
-    <script></script>
-  </body>
+  <div id="mealList" class="meal-list"></div>
+  
+  <div class="modal-container">
+    <button id="recipeCloseBtn" class="close-button">&times;</button>
+    <div class="meal-details-content">
+      <!-- Content from js will be inserted here -->
+    </div>
+  </div>
+
+  <script></script>
+</body>
+
 </html>
