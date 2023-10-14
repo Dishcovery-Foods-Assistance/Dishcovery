@@ -8,20 +8,48 @@
 }
 
 body {
-  background-color: #f0f0f0;
+  background-color: rgb(255, 255, 255);
 }
 
 header {
-  background-color: #8e8181;
-  color: #fff;
+  background-color: #ffffff;
+  color: #000000;
   text-align: center;
   padding: 50px 50px 30px;
 }
 
-h1 {
+span {
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  padding : 15px 15px 15px;
+}
+
+
+.title-container{
+  
+  position: relative;
+  justify-content: center;
+  
+}
+
+.title-container img {
+  width: 100px;
+  height: 100px;
+
+}
+
+.title-container h1 {
   font-size: 100px;
   font-weight: 600;
   margin-bottom: 20px;
+  
+}
+
+.title-container h1, .title-container img {
+  margin: 0 0px; /* 좌우 여백을 10px로 수정 */
+  vertical-align: middle;
+  display: inline-block;
 }
 
 .search {
@@ -31,6 +59,7 @@ h1 {
 
 .search input {
   padding: 10px;
+  background-color: #eaf6ff;
   border: none;
   width: 40%;
   font-size: 15px;
@@ -40,7 +69,7 @@ h1 {
 
 .search button {
   padding: 10px 20px;
-  background-color: #f54a4ae4;
+  background-color: #51c751;
   border: none;
   width: 10%;
   cursor: pointer;
@@ -51,8 +80,11 @@ h1 {
   transition: all 0.3s ease;
 }
 
+
+
+
 .search button:hover {
-  background-color: #f5484865;
+  background-color: #3bd69565;
 }
 
 .meal-list {
@@ -186,15 +218,20 @@ h1 {
   background-color: #e64a19;
 }
 
+
+
 @media screen and (width < 980px) {
   .meal-item {
     flex-basis: calc(50% - 20px);
     max-width: calc(50% - 20px);
     margin: 0;
   }
+  .search checklist {
+    width : 5%;
+  }
 
   .search input {
-    width: 80%;
+    width: 75%;
   }
 
   .search button {

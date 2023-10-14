@@ -17,6 +17,7 @@ venv/
 ENV/
 env/
 myenv/
+dish/
 
 # PyCharm related (optional)
 .idea/
