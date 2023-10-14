@@ -6,7 +6,8 @@ import requests
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-
+from django.http import HttpResponse
+from django.views import View
 from home import models
 
 
@@ -19,6 +20,40 @@ from home import models
 # return HttpResponse("HttpResponse : /home/templates/home.html.")
 def main_home(request):
     return render(request, 'home.html')
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+def kakaoLogin(request):
+    if (request.method == 'GET'):
+        url = os.getenv('KAKAO_URL')
+        return JsonResponse({'message': 'SUCCESS', 'result': url}, status=200)
+    else:
+        return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=400)
+
+
+class KakaoCallbackView(View):
+    def get(self, request, *args, **kwargs):
+        code = request.GET.get('code', '')
+
+        data = {
+            "grant_type": 'authorization_code',
+            "client_id": os.getenv('KAKAO_KEY'),
+            "redirection_url": os.getenv('REDIRECT_URL'),
+            "code": code
+        }
+        kakao_token_api = "https://kauth.kakao.com/oauth/token"
+        access_token = requests.post(kakao_token_api, data=data).json()["access_token"]
+
+        kakao_user_api = "https://kapi.kakao.com/v2/user/me"
+        header = {"Authorization": f"Bearer ${access_token}"}
+        user_information = requests.get(kakao_user_api, headers=header).json()
+        kakao_id = user_information["id"]
+        kakao_nickname = user_information["properties"]["nickname"]
+
+        models.saveUserInfo(kakao_id, kakao_nickname)
+
+        return JsonResponse({'message': 'SUCCESS'}, status=200)
+        #여기서 success 말고 토큰 발급 구현 필요
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -40,7 +75,7 @@ def dbSearch(request):
 def rcpHandler(url):
     response = requests.get(url)
     if response.status_code != 200:
-        return JsonResponse({'message': 'API_ERR'}, status=400)
+        return JsonResponse({'message': 'API_ERR'}, status=response.status_code)
     res = json.loads(response.text)
     rcp = res['COOKRCP01']
     return rcp
@@ -50,14 +85,20 @@ def rcpHandler(url):
 def apiSearch(request):
     if (request.method == 'GET'):
         recipe_name = request.GET.get('keyword')
+        if not recipe_name:
+            return JsonResponse({'message': 'NO_KEY'}, status=400)
         url = os.getenv('FOOD_URL') + recipe_name
 
         rcp = rcpHandler(url)
         result = rcp['RESULT']
         msg = result['MSG']
-        count = rcp['total_count']
-        rcp_row = rcp['row']
 
+        if rcp['total_count'] == '0':
+            return JsonResponse({'message': msg}, status=400)
+        else:
+            count = rcp['total_count']
+
+        rcp_row = rcp['row']
         rowsList = []
         for row in rcp_row:
             name = row.get('RCP_NM', None)
@@ -75,11 +116,16 @@ def foodDetail(request):
     if (request.method == 'GET'):
         recipe_name = request.GET.get('keyword')
         recipe_seq = request.GET.get('seq')
+        if not recipe_name or not recipe_seq:
+            return JsonResponse({'message': 'NO_KEY'}, status=400)
         url = os.getenv('FOOD_URL') + recipe_name
 
         rcp = rcpHandler(url)
-        rcp_row = rcp['row']
+        if rcp['total_count'] == '0':
+            result = rcp['RESULT']
+            return JsonResponse({'message': result['MSG']}, status=400)
 
+        rcp_row = rcp['row']
         nutritionList = []
         recipeList = []
         for row in rcp_row:
@@ -106,7 +152,8 @@ def foodDetail(request):
                         recipe[f'만드는법_이미지_{i:02}'] = img
                 recipe['저감 조리법 TIP'] = tip
                 recipeList.append(recipe)
-
+        if not recipeList:
+            return JsonResponse({'message': 'NO_MATCHING_SEQ'}, status=400)
         return JsonResponse({'메뉴명': name, '영양성분': nutritionList, '레시피': recipeList}, status=200)
     else:
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=400)

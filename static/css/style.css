@@ -18,14 +18,38 @@ header {
   padding: 50px 50px 30px;
 }
 
-h1 {
+span {
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  padding : 15px 15px 15px;
+}
+
+
+.title-container{
+  
+  position: relative;
+  justify-content: center;
+  
+}
+
+.title-container img {
+  width: 100px;
+  height: 100px;
+
+}
+
+.title-container h1 {
   font-size: 100px;
   font-weight: 600;
   margin-bottom: 20px;
+  
 }
 
-img{
-  width : 30%;
+.title-container h1, .title-container img {
+  margin: 0 0px; /* 좌우 여백을 10px로 수정 */
+  vertical-align: middle;
+  display: inline-block;
 }
 
 .search {
