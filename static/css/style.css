@@ -22,15 +22,15 @@ span {
   font-size: 20px;
   display: flex;
   justify-content: center;
-  padding : 15px 15px 15px;
+  padding: 15px 15px 15px;
 }
 
 
-.title-container{
-  
+.title-container {
+
   position: relative;
   justify-content: center;
-  
+
 }
 
 .title-container img {
@@ -43,14 +43,17 @@ span {
   font-size: 100px;
   font-weight: 600;
   margin-bottom: 20px;
-  
+
 }
 
-.title-container h1, .title-container img {
-  margin: 0 0px; /* 좌우 여백을 10px로 수정 */
+.title-container h1,
+.title-container img {
+  margin: 0 0px;
+  /* 좌우 여백을 10px로 수정 */
   vertical-align: middle;
   display: inline-block;
 }
+
 
 .search {
   display: flex;
@@ -83,17 +86,32 @@ span {
 
 
 
+
+
 .search button:hover {
   background-color: #3bd69565;
 }
 
 .meal-list {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
   justify-content: center;
   gap: 20px;
-  margin: 20px;
+  margin-left: 2000px;
+  margin-right: 2000px;
 }
+
+
+.circle {
+  width: 2000px;
+  height: 2000px; 
+  border-radius: 70%;
+  border: white hidden;
+  background-color: #a01919;
+  overflow: hidden;
+  padding: 200px; /* 원과 원 사이의 간격을 200px로 설정 */
+}
+
 
 .meal-item {
   flex-basis: calc(25% - 20px);
@@ -226,8 +244,9 @@ span {
     max-width: calc(50% - 20px);
     margin: 0;
   }
+
   .search checklist {
-    width : 5%;
+    width: 5%;
   }
 
   .search input {
