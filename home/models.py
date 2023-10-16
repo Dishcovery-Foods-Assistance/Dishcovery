@@ -38,13 +38,23 @@ def food_search(category, keyword):
 def saveUserInfo(kakao_id, kakao_nickname):
     kakaoid = kakao_id
     kakaonickname= kakao_nickname
+    user = findUserByKakao(kakaoid)
+    # 존재하는 회원인 경우 추가로 저장 안함
+    if not user:
+        conn = pymysql.connect(host=os.getenv('DB_HOST'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'),
+                               db=os.getenv('DB_NAME'), charset='utf8')
+        cur = conn.cursor()
+        sql = "INSERT INTO User (kakaoId, nickName) VALUES ("+str(kakaoid)+", '"+kakaonickname+"');"
+        cur.execute(sql)
+        conn.commit()
+        conn.close()
+
+
+def findUserByKakao(kakao_id):
     conn = pymysql.connect(host=os.getenv('DB_HOST'), user=os.getenv(
         'DB_USER'), password=os.getenv('DB_PASSWORD'), db=os.getenv('DB_NAME'), charset='utf8')
     cur = conn.cursor()
-    sql = "INSERT INTO User (kakaoId, nickName) VALUES ("+str(kakaoid)+", '"+kakaonickname+"');"
+    sql = "select * from user where kakaoId = '"+str(kakao_id)+"'"
     cur.execute(sql)
-    conn.commit()
-    conn.close()
-
-
-
+    res = cur.fetchall()
+    return res

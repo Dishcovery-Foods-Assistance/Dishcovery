@@ -28,8 +28,12 @@ urlpatterns = [
     path('recipe/', views.apiSearch, name='recipe'),
     path('recipe/detail/', views.foodDetail, name='detail'),
     path('kakao/', views.kakaoLogin, name='login'),
-    path('kakao/callback/', views.KakaoCallbackView.as_view(), name='kakao_callback')
+    path('kakao/callback/', views.KakaoCallbackView.as_view(), name='kakao_callback'),
+    path('token/verify/', views.verify_token, name='verify_token'),
+    path('token/refresh/', views.token_refresh, name='token_refresh')
     #    path('logIn', views.logIn),
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
