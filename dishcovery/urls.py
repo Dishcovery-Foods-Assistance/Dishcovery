@@ -23,7 +23,7 @@ from django.conf import settings
 app_name = 'home'
 
 urlpatterns = [
-    path('', views.main_home, name='main_home'),
+    path('', views.main_home, name='home'),
     path('search/', views.dbSearch, name='search'),
     path('recipe/', views.apiSearch, name='recipe'),
     path('recipe/detail/', views.foodDetail, name='detail'),
@@ -32,4 +32,5 @@ urlpatterns = [
     #    path('logIn', views.logIn),
 ]
 
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

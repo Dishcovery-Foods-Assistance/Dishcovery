@@ -6,17 +6,16 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{% static '/css/style.css' %}" />
+    <link rel="stylesheet" href="./style.css" />
     <title>Dishcovery</title>
-
-    <script type="text/javascript"></script>
   </head>
 
   <body>
     <header>
       <div class="title-container">
         <h1 id="titleH1">Dishcovery</h1>
-        <img id="titleImg" src="{% static '/image/plate.png' %}" />
+
+        <img src="./plate.png" alt="Dishcovery Image" />
       </div>
 
       <div class="search">
@@ -26,7 +25,7 @@
           placeholder="Enter an ingredient..."
         />
         <button id="searchButton">Search</button>
-        <script src="{% static '/javascript/searchbutton.js' %}"></script>
+        <script src="./searchbutton.js"></script>
       </div>
     </header>
     <span>Top searches: chicken, soup, ratatouille, pasta</span>
