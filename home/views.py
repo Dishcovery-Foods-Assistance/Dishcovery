@@ -67,7 +67,7 @@ def dbSearch(request):
             return JsonResponse({'message': 'NO_KEY'}, status=400)
         res = models.food_search(category, keyword)
         if not res:
-            return JsonResponse({'message': 'DB_ERR'}, status=400)
+            return JsonResponse({'message': 'NOT_IN_DB'}, status=400)
         else:
             return JsonResponse({'message': 'SUCCESS', 'result': res}, status=200)
     else:
@@ -76,8 +76,6 @@ def dbSearch(request):
 
 def rcpHandler(url):
     response = requests.get(url)
-    if response.status_code != 200:
-        return JsonResponse({'message': 'API_ERR'}, status=response.status_code)
     res = json.loads(response.text)
     rcp = res['COOKRCP01']
     return rcp
@@ -90,10 +88,11 @@ def apiSearch(request):
         if not recipe_name:
             return JsonResponse({'message': 'NO_KEY'}, status=400)
         url = os.getenv('FOOD_URL') + recipe_name
-
-        rcp = rcpHandler(url)
-        result = rcp['RESULT']
-        msg = result['MSG']
+        try:
+            rcp = rcpHandler(url)
+        except:
+            return JsonResponse({'message': 'API_ERR'}, status=404)
+        msg = rcp['RESULT']['MSG']
 
         if rcp['total_count'] == '0':
             return JsonResponse({'message': msg}, status=400)
@@ -121,8 +120,11 @@ def foodDetail(request):
         if not recipe_name or not recipe_seq:
             return JsonResponse({'message': 'NO_KEY'}, status=400)
         url = os.getenv('FOOD_URL') + recipe_name
+        try:
+            rcp = rcpHandler(url)
+        except:
+            return JsonResponse({'message': 'API_ERR'}, status=404)
 
-        rcp = rcpHandler(url)
         if rcp['total_count'] == '0':
             result = rcp['RESULT']
             return JsonResponse({'message': result['MSG']}, status=400)

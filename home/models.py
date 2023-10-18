@@ -12,6 +12,7 @@ def food_search(category, keyword):
         'DB_USER'), password=os.getenv('DB_PASSWORD'), db=os.getenv('DB_NAME'), charset='utf8')
     cur = conn.cursor()
     sql = "SELECT `F_Name`, `F_Method`, `F_type` from food where "
+    re = None
     if category == "name":
         cur.execute(sql+"F_Name = '"+keyword+"'")
     elif category == "method":
@@ -28,7 +29,7 @@ def food_search(category, keyword):
                 cur.execute(sql+"F_type = '"+keyword+"'")
 
     res = cur.fetchall()
-    if not res:
+    if not res and re:
         res = re
     conn.commit()
     conn.close()
