@@ -9,7 +9,7 @@ from django.utils.decorators import method_decorator
 from django.http import HttpResponse
 from django.views import View
 from home import models
-
+from home import tokens
 
 
 # Create your views here.
@@ -29,7 +29,7 @@ def kakaoLogin(request):
         url = os.getenv('KAKAO_URL')
         return JsonResponse({'message': 'SUCCESS', 'result': url}, status=200)
     else:
-        return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=400)
+        return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
 
 class KakaoCallbackView(View):
@@ -53,8 +53,8 @@ class KakaoCallbackView(View):
 
         models.saveUserInfo(kakao_id, kakao_nickname)
 
-        return JsonResponse({'message': 'SUCCESS'}, status=200)
-        #여기서 success 말고 토큰 발급 구현 필요
+        user_token = tokens.generate_token(kakao_id)
+        return JsonResponse({'message': 'SUCCESS', 'token': user_token}, status=200)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -63,20 +63,19 @@ def dbSearch(request):
         data = json.loads(request.body)
         category = data["search_category"]
         keyword = data["food_keyword"]
-
+        if not category or not keyword:
+            return JsonResponse({'message': 'NO_KEY'}, status=400)
         res = models.food_search(category, keyword)
         if not res:
-            return JsonResponse({'message': 'DB_ERR'}, status=400)
+            return JsonResponse({'message': 'NOT_IN_DB'}, status=400)
         else:
             return JsonResponse({'message': 'SUCCESS', 'result': res}, status=200)
     else:
-        return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=400)
+        return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
 
 def rcpHandler(url):
     response = requests.get(url)
-    if response.status_code != 200:
-        return JsonResponse({'message': 'API_ERR'}, status=response.status_code)
     res = json.loads(response.text)
     rcp = res['COOKRCP01']
     return rcp
@@ -89,10 +88,11 @@ def apiSearch(request):
         if not recipe_name:
             return JsonResponse({'message': 'NO_KEY'}, status=400)
         url = os.getenv('FOOD_URL') + recipe_name
-
-        rcp = rcpHandler(url)
-        result = rcp['RESULT']
-        msg = result['MSG']
+        try:
+            rcp = rcpHandler(url)
+        except:
+            return JsonResponse({'message': 'API_ERR'}, status=404)
+        msg = rcp['RESULT']['MSG']
 
         if rcp['total_count'] == '0':
             return JsonResponse({'message': msg}, status=400)
@@ -109,7 +109,7 @@ def apiSearch(request):
             # 음식 명으로만 검색할 경우 여러가지 값이 해당 명이 포함된 다른 음식들도 검색되기 때문에 일련번호(seq)로 레시피와 영양정보를 알아낼 수 있도록 함
         return JsonResponse({'message': msg, 'total_count': count, 'row': rowsList}, status=200)
     else:
-        return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=400)
+        return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -120,8 +120,11 @@ def foodDetail(request):
         if not recipe_name or not recipe_seq:
             return JsonResponse({'message': 'NO_KEY'}, status=400)
         url = os.getenv('FOOD_URL') + recipe_name
+        try:
+            rcp = rcpHandler(url)
+        except:
+            return JsonResponse({'message': 'API_ERR'}, status=404)
 
-        rcp = rcpHandler(url)
         if rcp['total_count'] == '0':
             result = rcp['RESULT']
             return JsonResponse({'message': result['MSG']}, status=400)
@@ -157,4 +160,32 @@ def foodDetail(request):
             return JsonResponse({'message': 'NO_MATCHING_SEQ'}, status=400)
         return JsonResponse({'메뉴명': name, '영양성분': nutritionList, '레시피': recipeList}, status=200)
     else:
-        return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=400)
+        return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+def verify_token(request):
+    if (request.method == 'GET'):
+        access_token = request.GET.get('access_token')
+        if not access_token:
+            return JsonResponse({'message': 'NOT_FOUND_TOKEN'}, status=400)
+        res = tokens.verify_token(access_token)
+        if res == "SUCCESS":
+            return JsonResponse({'message': res}, status=200)
+        else:
+            return JsonResponse({'message': res}, status=401)
+    else:
+        return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+def token_refresh(request):
+    if(request.method == 'POST'):
+        data = json.loads(request.body)
+        refresh_token = data["refresh_token"]
+        if not refresh_token:
+            return JsonResponse({'message': 'NOT_FOUND_TOKEN'}, status=400)
+        res = tokens.refresh(refresh_token)
+        return JsonResponse(res, status=401)
+    else:
+        return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
