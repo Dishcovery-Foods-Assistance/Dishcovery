@@ -7,7 +7,7 @@
 #no config files
 config/
 migrations/
-
+admin/
 ### Django ###
 *.log
 *.pot
