@@ -63,7 +63,8 @@ def dbSearch(request):
         data = json.loads(request.body)
         category = data["search_category"]
         keyword = data["food_keyword"]
-
+        if not category or not keyword:
+            return JsonResponse({'message': 'NO_KEY'}, status=400)
         res = models.food_search(category, keyword)
         if not res:
             return JsonResponse({'message': 'DB_ERR'}, status=400)
