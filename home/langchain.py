@@ -5,12 +5,10 @@ import requests, json
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
-
-
 load_dotenv()
 
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
 from langchain import OpenAI
 from langchain import ConversationChain
 from langchain.chat_models import ChatOpenAI

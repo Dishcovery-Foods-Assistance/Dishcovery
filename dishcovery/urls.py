@@ -33,7 +33,6 @@ urlpatterns = [
     path('token/refresh/', views.token_refresh, name='token_refresh')
     #    path('logIn', views.logIn),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
