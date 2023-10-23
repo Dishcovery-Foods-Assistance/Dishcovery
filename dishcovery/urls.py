@@ -30,7 +30,10 @@ urlpatterns = [
     path('kakao/', views.kakaoLogin, name='login'),
     path('kakao/callback/', views.KakaoCallbackView.as_view(), name='kakao_callback'),
     path('token/verify/', views.verify_token, name='verify_token'),
-    path('token/refresh/', views.token_refresh, name='token_refresh')
+    path('token/refresh/', views.token_refresh, name='token_refresh'),
+
+    path('chatbot/', views.food_recommendation, name='token_refresh'),
+    path('chatbot/assistance/', views.food_assistance, name='token_refresh')
     #    path('logIn', views.logIn),
 ]
 
