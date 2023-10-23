@@ -97,10 +97,18 @@ def rcpHandler(url):
 @method_decorator(csrf_exempt, name='dispatch')
 def apiSearch(request):
     if (request.method == 'GET'):
-        recipe_name = request.GET.get('keyword')
-        if not recipe_name:
+        keyword = request.GET.get('keyword')
+        tag = request.GET.get('tag')
+        if not keyword or not tag:
             return JsonResponse({'message': 'NO_KEY'}, status=400)
-        url = os.getenv('FOOD_URL') + recipe_name
+        url = os.getenv('FOOD_URL')
+        if tag == 'name':
+            url += os.getenv('RCP_NAME')
+        elif tag == 'type':
+            url += os.getenv('RCP_TYPE')
+        else:
+            return JsonResponse({'message': 'INVALID_TAG'}, status=400)
+        url += keyword
         try:
             rcp = rcpHandler(url)
         except:
