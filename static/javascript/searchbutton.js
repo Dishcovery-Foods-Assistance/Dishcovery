@@ -45,3 +45,4 @@ function addCircles() {
         mealList.appendChild(row);
     }
 }
+

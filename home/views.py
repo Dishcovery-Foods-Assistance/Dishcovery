@@ -20,9 +20,7 @@ from langchain.chat_models import ChatOpenAI
 
 # Create your views here.
 
-
 # return HttpResponse("HttpResponse : /home/templates/welcome_home.html.")
-
 
 # return HttpResponse("HttpResponse : /home/templates/home.html.")
 def main_home(request):
