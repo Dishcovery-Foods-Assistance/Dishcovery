@@ -78,7 +78,16 @@ def dbSearch(request):
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
 
-def rcpHandler(url):
+tag = ''
+keyword = ''
+
+
+def rcpHandler():
+    global tag, keyword
+    if tag == 'name':
+        url = os.getenv('FOOD_URL') + os.getenv('RCP_NAME') + keyword
+    elif tag == 'type':
+        url = os.getenv('FOOD_URL') + os.getenv('RCP_TYPE') + keyword
     response = requests.get(url)
     res = json.loads(response.text)
     rcp = res['COOKRCP01']
@@ -88,20 +97,13 @@ def rcpHandler(url):
 @method_decorator(csrf_exempt, name='dispatch')
 def apiSearch(request):
     if (request.method == 'GET'):
+        global tag, keyword
         keyword = request.GET.get('keyword')
         tag = request.GET.get('tag')
         if not keyword or not tag:
             return JsonResponse({'message': 'NO_KEY'}, status=400)
-        url = os.getenv('FOOD_URL')
-        if tag == 'name':
-            url += os.getenv('RCP_NAME')
-        elif tag == 'type':
-            url += os.getenv('RCP_TYPE')
-        else:
-            return JsonResponse({'message': 'INVALID_TAG'}, status=400)
-        url += keyword
         try:
-            rcp = rcpHandler(url)
+            rcp = rcpHandler()
         except:
             return JsonResponse({'message': 'API_ERR'}, status=404)
         msg = rcp['RESULT']['MSG']
@@ -127,13 +129,12 @@ def apiSearch(request):
 @method_decorator(csrf_exempt, name='dispatch')
 def foodDetail(request):
     if (request.method == 'GET'):
-        recipe_name = request.GET.get('keyword')
+        global keyword, tag
         recipe_seq = request.GET.get('seq')
-        if not recipe_name or not recipe_seq:
+        if not keyword or not tag or not recipe_seq:
             return JsonResponse({'message': 'NO_KEY'}, status=400)
-        url = os.getenv('FOOD_URL') + recipe_name
         try:
-            rcp = rcpHandler(url)
+            rcp = rcpHandler()
         except:
             return JsonResponse({'message': 'API_ERR'}, status=404)
 
