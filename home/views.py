@@ -247,7 +247,7 @@ def food_recommendation(request):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-def food_assistace(request):
+def food_assistance(request):
     if (request.method == 'GET'):
         try:
             llm = OpenAI(temperature=0)

@@ -36,10 +36,20 @@ def food_search(category, keyword):
     return res
 
 
-def saveUserInfo(kakao_id, kakao_nickname):
+def find_user_by_kakao(kakao_id):
+    conn = pymysql.connect(host=os.getenv('DB_HOST'), user=os.getenv(
+        'DB_USER'), password=os.getenv('DB_PASSWORD'), db=os.getenv('DB_NAME'), charset='utf8')
+    cur = conn.cursor()
+    sql = "select * from user where kakaoId = '"+str(kakao_id)+"'"
+    cur.execute(sql)
+    res = cur.fetchall()
+    return res
+
+
+def save_user_info(kakao_id, kakao_nickname):
     kakaoid = kakao_id
-    kakaonickname= kakao_nickname
-    user = findUserByKakao(kakaoid)
+    kakaonickname = kakao_nickname
+    user = find_user_by_kakao(kakaoid)
     # 존재하는 회원인 경우 추가로 저장 안함
     if not user:
         conn = pymysql.connect(host=os.getenv('DB_HOST'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'),
@@ -49,13 +59,3 @@ def saveUserInfo(kakao_id, kakao_nickname):
         cur.execute(sql)
         conn.commit()
         conn.close()
-
-
-def findUserByKakao(kakao_id):
-    conn = pymysql.connect(host=os.getenv('DB_HOST'), user=os.getenv(
-        'DB_USER'), password=os.getenv('DB_PASSWORD'), db=os.getenv('DB_NAME'), charset='utf8')
-    cur = conn.cursor()
-    sql = "select * from user where kakaoId = '"+str(kakao_id)+"'"
-    cur.execute(sql)
-    res = cur.fetchall()
-    return res
