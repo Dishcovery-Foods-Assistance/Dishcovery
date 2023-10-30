@@ -78,7 +78,16 @@ def dbSearch(request):
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
 
-def rcpHandler(url):
+tag = ''
+keyword = ''
+
+
+def rcpHandler():
+    global tag, keyword
+    if tag == 'name':
+        url = os.getenv('FOOD_URL') + os.getenv('RCP_NAME') + keyword
+    elif tag == 'type':
+        url = os.getenv('FOOD_URL') + os.getenv('RCP_TYPE') + keyword
     response = requests.get(url)
     res = json.loads(response.text)
     rcp = res['COOKRCP01']
@@ -88,12 +97,13 @@ def rcpHandler(url):
 @method_decorator(csrf_exempt, name='dispatch')
 def apiSearch(request):
     if (request.method == 'GET'):
-        recipe_name = request.GET.get('keyword')
-        if not recipe_name:
+        global tag, keyword
+        keyword = request.GET.get('keyword')
+        tag = request.GET.get('tag')
+        if not keyword or not tag:
             return JsonResponse({'message': 'NO_KEY'}, status=400)
-        url = os.getenv('FOOD_URL') + recipe_name
         try:
-            rcp = rcpHandler(url)
+            rcp = rcpHandler()
         except:
             return JsonResponse({'message': 'API_ERR'}, status=404)
         msg = rcp['RESULT']['MSG']
@@ -119,13 +129,12 @@ def apiSearch(request):
 @method_decorator(csrf_exempt, name='dispatch')
 def foodDetail(request):
     if (request.method == 'GET'):
-        recipe_name = request.GET.get('keyword')
+        global keyword, tag
         recipe_seq = request.GET.get('seq')
-        if not recipe_name or not recipe_seq:
+        if not keyword or not tag or not recipe_seq:
             return JsonResponse({'message': 'NO_KEY'}, status=400)
-        url = os.getenv('FOOD_URL') + recipe_name
         try:
-            rcp = rcpHandler(url)
+            rcp = rcpHandler()
         except:
             return JsonResponse({'message': 'API_ERR'}, status=404)
 
@@ -141,11 +150,11 @@ def foodDetail(request):
             if seq == recipe_seq:
                 name = row.get('RCP_NM', None)
                 # 일련번호(seq)로 구분
-                eng = row.get('INFO_ENG', None)
-                car = row.get('INFO_CAR', None)
-                pro = row.get('INFO_PRO', None)
-                fat = row.get('INFO_FAT', None)
-                na = row.get('INFO_NA', None)
+                eng = row.get('INFO_ENG', None)+"kcal"
+                car = row.get('INFO_CAR', None)+"g"
+                pro = row.get('INFO_PRO', None)+"g"
+                fat = row.get('INFO_FAT', None)+"g"
+                na = row.get('INFO_NA', None)+"g"
                 nutritionList.append({'열량': eng, '탄수화물': car, '단백질': pro, '지방': fat, '나트륨': na})
 
                 dtls = row.get('RCP_PARTS_DTLS', None)
@@ -160,9 +169,10 @@ def foodDetail(request):
                         recipe[f'만드는법_이미지_{i:02}'] = img
                 recipe['저감 조리법 TIP'] = tip
                 recipeList.append(recipe)
+                break
         if not recipeList:
             return JsonResponse({'message': 'NO_MATCHING_SEQ'}, status=400)
-        return JsonResponse({'메뉴명': name, '영양성분': nutritionList, '레시피': recipeList}, status=200)
+        return JsonResponse({'message': '1인분 레시피', '메뉴명': name, '영양성분': nutritionList, '레시피': recipeList}, status=200)
     else:
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
@@ -193,9 +203,9 @@ def token_refresh(request):
         return JsonResponse(res, status=401)
     else:
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
-    
-    
-    
+
+
+
 chat_model = ChatOpenAI()
 
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
@@ -204,53 +214,54 @@ os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
 def food_recommendation(request):
     if (request.method == 'GET'):
         user_input = request.GET.get('user_input')
-    
-        prompt = PromptTemplate(
-            user_input = ['user_input'],
-            template= "{user_input}을 좋아하는 사람에게 추천할 만한 음식을 추천해줘."
-        )
-    
-        llm = OpenAI(temperature=0.8)
-    
-        user_input = user_input.replace(" ", "")
-        user_input = user_input.replace("\n", "")
-        user_input = user_input.replace("\t", "")
-        user_input = user_input.replace("\'", "")
-        user_input = user_input.replace("\"", "")
-        user_input = user_input.replace("\r", "")
-    
-        chain = LLMChain(llm=llm, prompt=prompt)
-    
-        chain.run("호불호 없는 맛있는 음식")
-    
-        result = (prompt.format(chain.run))
-    
         if not user_input:
             return JsonResponse({'message': 'NO_KEY'}, status=400)
-    
         if user_input == '종료':
             return JsonResponse({'message': 'SUCCESS', 'result': '종료'}, status=200)
-    
-        return JsonResponse({'message': 'SUCCESS', 'result': result}, status=200)
-    
+        try:
+            prompt = PromptTemplate(
+                user_input = ['user_input'],
+                template= "{user_input}을 좋아하는 사람에게 추천할 만한 음식을 추천해줘."
+            )
+
+            llm = OpenAI(temperature=0.8)
+
+            user_input = user_input.replace(" ", "")
+            user_input = user_input.replace("\n", "")
+            user_input = user_input.replace("\t", "")
+            user_input = user_input.replace("\'", "")
+            user_input = user_input.replace("\"", "")
+            user_input = user_input.replace("\r", "")
+
+            chain = LLMChain(llm=llm, prompt=prompt)
+
+            chain.run("호불호 없는 맛있는 음식")
+
+            result = (prompt.format(chain.run))
+
+            return JsonResponse({'message': 'SUCCESS', 'result': result}, status=200)
+        except:
+            return JsonResponse({'message': 'INCORRECT_API_KEY'}, status=405)
+
     else:
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-def food_assistace(request):
+def food_assistance(request):
     if (request.method == 'GET'):
-        llm = OpenAI(temperature=0)
-        conversation = ConversationChain(llm=llm, verbose=True)
-    
-        user_input = request.GET.get('user_input')
-    
-        while True:
-            output = conversation.predict(user_input)
-            return JsonResponse({'message': 'SUCCESS', 'result': output}, status=200)
+        try:
+            llm = OpenAI(temperature=0)
+            conversation = ConversationChain(llm=llm, verbose=True)
 
-            if user_input == '종료':
-                break
-            
+            user_input = request.GET.get('user_input')
+
+            while True:
+                if user_input == '종료':
+                    break
+                output = conversation.predict(user_input)
+                return JsonResponse({'message': 'SUCCESS', 'result': output}, status=200)
+        except:
+            return JsonResponse({'message': 'INCORRECT_API_KEY'}, status=405)
     else:
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
