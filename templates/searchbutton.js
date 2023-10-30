@@ -12,7 +12,7 @@ function addCircle() {
 const addButton = document.getElementById("searchButton");
 addButton.addEventListener("click", function(event){
     if (document.getElementById("searchInput").value.trim() !== "") {
-        // 입력된 텍스트가 있을 때만 4x4 그리드로 원을 추가합니다.
+        // 입력된 텍스트가 있을 때만 3x3 그리드로 원을 추가합니다.
         addCircles();
     }
 
@@ -22,27 +22,29 @@ addButton.addEventListener("click", function(event){
 const inputField = document.getElementById("searchInput");
 inputField.addEventListener("keyup", function (event) {
     if (event.key === "Enter" && inputField.value.trim() !== "") {
-        // 입력된 텍스트가 있고 Enter 키를 누를 경우 4x4 그리드로 원을 추가합니다.
+        // 입력된 텍스트가 있고 Enter 키를 누를 경우 3x3 그리드로 원을 추가합니다.
         addCircles();
     }
 });
 
-// 원을 한 번에 4x4로 생성하는 함수
+// 원을 한 번에 3x3로 생성하는 함수
 function addCircles() {
     const mealList = document.getElementById("mealList");
     mealList.innerHTML = ""; // mealList 내용 초기화
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
         const row = document.createElement("div");
         row.classList.add("row");
 
-        for (let j = 0; j < 4; j++) {
+        for (let j = 0; j < 3; j++) {
             const circle = document.createElement("div");
             circle.classList.add("circle");
+            const padding_circle = document.createElement("div");
+            padding_circle.classList.add("padding_circle");
             row.appendChild(circle);
+            row.appendChild(padding_circle);
         }
 
         mealList.appendChild(row);
     }
 }
-
