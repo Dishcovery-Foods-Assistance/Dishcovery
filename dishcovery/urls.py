@@ -36,7 +36,6 @@ urlpatterns = [
     path('chatbot/assistance/', views.food_assistance, name='token_refresh')
     #    path('logIn', views.logIn),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

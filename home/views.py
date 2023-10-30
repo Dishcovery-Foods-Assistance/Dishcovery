@@ -13,23 +13,14 @@ from home import tokens
 
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
-import langchain
 from langchain.llms import OpenAI
 from langchain.chains import ConversationChain
-from langchain.memory import ConversationBufferMemory
 from langchain.chat_models import ChatOpenAI
 
-Chat_model = ChatOpenAI()
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
-Llm = OpenAI(temperature=0.9)
-Conversation = ConversationChain(
-    llm=Llm, verbose=True, memory=ConversationBufferMemory()
-)
+
 # Create your views here.
 
-
 # return HttpResponse("HttpResponse : /home/templates/welcome_home.html.")
-
 
 # return HttpResponse("HttpResponse : /home/templates/home.html.")
 def main_home(request):
@@ -213,40 +204,41 @@ def token_refresh(request):
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
 
-def find_and_print_after(s):
-    target = "AIMessage(content='"
-    end = "')]))>"
-    try:
-        index = s.rindex(target)
-    except ValueError:
-        return None
-    substring = s[index + len(target):]
-    if substring.endswith(end):
-        substring = substring[:-len(end)]
-    return substring
 
+chat_model = ChatOpenAI()
+
+os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
 
 @method_decorator(csrf_exempt, name='dispatch')
 def food_recommendation(request):
     if (request.method == 'GET'):
+        user_input = request.GET.get('user_input')
+        if not user_input:
+            return JsonResponse({'message': 'NO_KEY'}, status=400)
+        if user_input == '종료':
+            return JsonResponse({'message': 'SUCCESS', 'result': '종료'}, status=200)
         try:
-            global Conversation
-            user_input = request.GET.get('user_input')
-            if not user_input:
-                return JsonResponse({'message': 'NO_KEY'}, status=400)
             prompt = PromptTemplate(
-                template="{food} 좋아하는 사람에게 추천할 만한 호불호 없는 맛있는 음식을 추천해줘.",
-                input_variables=['food']
+                user_input = ['user_input'],
+                template= "{user_input}을 좋아하는 사람에게 추천할 만한 음식을 추천해줘."
             )
-            question=prompt.format(food=user_input)
-            Conversation.predict(input=question)
-            memory = str(Conversation.memory.json)
-            result = find_and_print_after(memory)
-            return JsonResponse({'message': 'SUCCESS', 'result': result}, status=200)
 
-            if user_input == '종료':
-                Conversation = ConversationChain(llm=Llm, verbose=True, memory=ConversationBufferMemory())
-                return JsonResponse({'message': 'SUCCESS', 'result': '종료'}, status=200)
+            llm = OpenAI(temperature=0.8)
+
+            user_input = user_input.replace(" ", "")
+            user_input = user_input.replace("\n", "")
+            user_input = user_input.replace("\t", "")
+            user_input = user_input.replace("\'", "")
+            user_input = user_input.replace("\"", "")
+            user_input = user_input.replace("\r", "")
+
+            chain = LLMChain(llm=llm, prompt=prompt)
+
+            chain.run("호불호 없는 맛있는 음식")
+
+            result = (prompt.format(chain.run))
+
+            return JsonResponse({'message': 'SUCCESS', 'result': result}, status=200)
         except:
             return JsonResponse({'message': 'INCORRECT_API_KEY'}, status=405)
 
@@ -255,24 +247,20 @@ def food_recommendation(request):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-def food_assistance(request):
+def food_assistace(request):
     if (request.method == 'GET'):
-        global Conversation
         try:
             llm = OpenAI(temperature=0)
-            user_input = request.GET.get('user_input')
-            if not user_input:
-                return JsonResponse({'message': 'NO_KEY'}, status=400)
-            Conversation.predict(input=user_input)
-            memory = str(Conversation.memory.json)
-            result = find_and_print_after(memory)
-            return JsonResponse({'message': 'SUCCESS', 'result': result}, status=200)
+            conversation = ConversationChain(llm=llm, verbose=True)
 
-            if user_input == '종료':
-                Conversation = ConversationChain(llm=llm, verbose=True, memory=ConversationBufferMemory())
-                return JsonResponse({'message': 'SUCCESS', 'result': '종료'}, status=200)
+            user_input = request.GET.get('user_input')
+
+            while True:
+                if user_input == '종료':
+                    break
+                output = conversation.predict(user_input)
+                return JsonResponse({'message': 'SUCCESS', 'result': output}, status=200)
         except:
             return JsonResponse({'message': 'INCORRECT_API_KEY'}, status=405)
-
     else:
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
