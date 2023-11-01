@@ -220,10 +220,9 @@ def food_recommendation(request):
             return JsonResponse({'message': 'SUCCESS', 'result': '종료'}, status=200)
         try:
             prompt = PromptTemplate(
-                user_input = ['user_input'],
-                template= "{user_input}을 좋아하는 사람에게 추천할 만한 음식을 추천해줘."
+                input_variables = ['user_input'],
+                template= "{user_input}을 좋아하는 사람에게 추천할 만한 호불호 없는 맛있는 음식을 추천해줘."
             )
-
             llm = OpenAI(temperature=0.8)
 
             user_input = user_input.replace(" ", "")
@@ -235,9 +234,7 @@ def food_recommendation(request):
 
             chain = LLMChain(llm=llm, prompt=prompt)
 
-            chain.run("호불호 없는 맛있는 음식")
-
-            result = (prompt.format(chain.run))
+            result = (chain.run(user_input))
 
             return JsonResponse({'message': 'SUCCESS', 'result': result}, status=200)
         except:
@@ -247,19 +244,20 @@ def food_recommendation(request):
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
 
+Llm = OpenAI(temperature=0)
+Conversation = ConversationChain(llm=Llm, verbose=True)
 @method_decorator(csrf_exempt, name='dispatch')
 def food_assistance(request):
+    global Conversation
+    global Llm
     if (request.method == 'GET'):
         try:
-            llm = OpenAI(temperature=0)
-            conversation = ConversationChain(llm=llm, verbose=True)
-
             user_input = request.GET.get('user_input')
-
             while True:
                 if user_input == '종료':
+                    Conversation = ConversationChain(llm=Llm, verbose=True)
                     break
-                output = conversation.predict(user_input)
+                output = Conversation.predict(input=user_input)
                 return JsonResponse({'message': 'SUCCESS', 'result': output}, status=200)
         except:
             return JsonResponse({'message': 'INCORRECT_API_KEY'}, status=405)
