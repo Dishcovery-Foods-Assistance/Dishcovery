@@ -217,6 +217,8 @@ chat_model = ChatOpenAI()
 
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
 
+Llm = OpenAI(temperature=0, max_tokens = 1000, model_name='gpt-4')
+Conversation = ConversationChain(llm=Llm, verbose=True)
 
 @method_decorator(csrf_exempt, name='dispatch')
 def food_recommendation(request):
@@ -231,7 +233,7 @@ def food_recommendation(request):
                 input_variables=['user_input'],
                 template="{user_input}을 좋아하는 사람에게 추천할 만한 호불호 없는 맛있는 음식을 짧게 추천해줘."
             )
-            llm = OpenAI(temperature=0.8)
+            global Llm
 
             user_input = user_input.replace(" ", "")
             user_input = user_input.replace("\n", "")
@@ -240,12 +242,10 @@ def food_recommendation(request):
             user_input = user_input.replace("\"", "")
             user_input = user_input.replace("\r", "")
 
-            chain = LLMChain(llm=llm, prompt=prompt)
+            chain = LLMChain(llm=Llm, prompt=prompt)
 
             result = (chain.run(user_input))
-            print(result)
             result = result.replace("\n", "")
-            print (result)
             return JsonResponse({'message': 'SUCCESS', 'result': result}, status=200)
         except:
             return JsonResponse({'message': 'INCORRECT_API_KEY'}, status=405)
@@ -254,8 +254,6 @@ def food_recommendation(request):
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
 
-Llm = OpenAI(temperature=0, max_tokens = 1000, model_name='gpt-4')
-Conversation = ConversationChain(llm=Llm, verbose=True)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -270,8 +268,6 @@ def food_assistance(request):
                     Conversation = ConversationChain(llm=Llm, verbose=True)
                     break
                 output = Conversation.predict(input=user_input)
-                print(output)
-                print(Conversation.memory)
                 return JsonResponse({'message': 'SUCCESS', 'result': output}, status=200)
             return JsonResponse({'message': 'SUCCESS', 'result': 'conversation finished'}, status=200)
         except:
