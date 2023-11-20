@@ -12,9 +12,13 @@ from home import models
 from home import tokens
 
 from langchain.prompts import PromptTemplate
+
 from langchain.chains import LLMChain
+
 from langchain.llms import OpenAI
+
 from langchain.chains import ConversationChain
+
 from langchain.chat_models import ChatOpenAI
 
 
@@ -47,7 +51,8 @@ class KakaoCallbackView(View):
             "code": code
         }
         kakao_token_api = "https://kauth.kakao.com/oauth/token"
-        access_token = requests.post(kakao_token_api, data=data).json()["access_token"]
+        access_token = requests.post(kakao_token_api, data=data).json()[
+            "access_token"]
 
         kakao_user_api = "https://kapi.kakao.com/v2/user/me"
         header = {"Authorization": f"Bearer ${access_token}"}
@@ -155,24 +160,27 @@ def foodDetail(request):
                 pro = row.get('INFO_PRO', None)+"g"
                 fat = row.get('INFO_FAT', None)+"g"
                 na = row.get('INFO_NA', None)+"g"
-                nutritionList.append({'열량': eng, '탄수화물': car, '단백질': pro, '지방': fat, '나트륨': na})
+                nutritionList.append(
+                    {'열량': eng, '탄수화물': car, '단백질': pro, '지방': fat, '나트륨': na})
 
                 dtls = row.get('RCP_PARTS_DTLS', None)
                 tip = row.get('RCP_NA_TIP', None)
                 recipe = {'재료정보': dtls}
+                image = row.get('ATT_FILE_NO_MK', None)
+                # views.py
                 for i in range(1, 21):
                     man = row.get(f'MANUAL{i:02}', None)
                     img = row.get(f'MANUAL_IMG{i:02}', None)
-                    if man :
-                        recipe[f'만드는법_{i:02}'] = man
-                    if img :
-                        recipe[f'만드는법_이미지_{i:02}'] = img
+                    if man:
+                        recipe[f'만드는법_{i:02}'] = {
+                            'content': man if man else '', 'image': img if img else ''}
+
                 recipe['저감 조리법 TIP'] = tip
                 recipeList.append(recipe)
                 break
         if not recipeList:
             return JsonResponse({'message': 'NO_MATCHING_SEQ'}, status=400)
-        return JsonResponse({'message': '1인분 레시피', '메뉴명': name, '영양성분': nutritionList, '레시피': recipeList}, status=200)
+        return JsonResponse({'message': '1인분 레시피', '메뉴명': name, '영양성분': nutritionList, '레시피': recipeList, '음식사진': image}, status=200)
     else:
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
@@ -194,7 +202,7 @@ def verify_token(request):
 
 @method_decorator(csrf_exempt, name='dispatch')
 def token_refresh(request):
-    if(request.method == 'POST'):
+    if (request.method == 'POST'):
         data = json.loads(request.body)
         refresh_token = data["refresh_token"]
         if not refresh_token:
@@ -205,10 +213,10 @@ def token_refresh(request):
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
 
-
 chat_model = ChatOpenAI()
 
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 def food_recommendation(request):
@@ -220,8 +228,8 @@ def food_recommendation(request):
             return JsonResponse({'message': 'SUCCESS', 'result': '종료'}, status=200)
         try:
             prompt = PromptTemplate(
-                input_variables = ['user_input'],
-                template= "{user_input}을 좋아하는 사람에게 추천할 만한 호불호 없는 맛있는 음식을 추천해줘."
+                input_variables=['user_input'],
+                template="{user_input}을 좋아하는 사람에게 추천할 만한 호불호 없는 맛있는 음식을 짧게 추천해줘."
             )
             llm = OpenAI(temperature=0.8)
 
@@ -235,7 +243,9 @@ def food_recommendation(request):
             chain = LLMChain(llm=llm, prompt=prompt)
 
             result = (chain.run(user_input))
-
+            print(result)
+            result = result.replace("\n", "")
+            print (result)
             return JsonResponse({'message': 'SUCCESS', 'result': result}, status=200)
         except:
             return JsonResponse({'message': 'INCORRECT_API_KEY'}, status=405)
@@ -244,8 +254,10 @@ def food_recommendation(request):
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
 
-Llm = OpenAI(temperature=0)
+Llm = OpenAI(temperature=0, max_tokens = 1000, model_name='gpt-4')
 Conversation = ConversationChain(llm=Llm, verbose=True)
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 def food_assistance(request):
     global Conversation
@@ -258,7 +270,10 @@ def food_assistance(request):
                     Conversation = ConversationChain(llm=Llm, verbose=True)
                     break
                 output = Conversation.predict(input=user_input)
+                print(output)
+                print(Conversation.memory)
                 return JsonResponse({'message': 'SUCCESS', 'result': output}, status=200)
+            return JsonResponse({'message': 'SUCCESS', 'result': 'conversation finished'}, status=200)
         except:
             return JsonResponse({'message': 'INCORRECT_API_KEY'}, status=405)
     else:
