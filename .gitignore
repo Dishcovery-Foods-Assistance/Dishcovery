@@ -1,6 +1,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,django
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,django
 
+Dishcovery_resnet50-50.h5
 #no secret.json files
 *secret.json
 *settings.py
