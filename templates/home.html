@@ -305,6 +305,12 @@
       <input type="search" id="searchInput12" placeholder="Enter a foodName..." style="width: 80%;">
       <button id="searchButton12" style="width: 15%;">검색</button>
     </div>
+
+    <div class="search123">
+      <input type="text" id="assistanceInput" placeholder="음식 정보를 입력하세요">
+      <button id="assistanceButton">검색</button>
+    </div>
+
   </header>
   <span>Top searches: chicken, soup, ratatouille, pasta</span> <!-- 임시 -->
   <div id="meal-list" class="meal-list">
@@ -317,6 +323,10 @@
     <div class="meal-details-content" id="meal-details-content">
     </div>
     <!-- Content from js will be inserted here -->
+    <div class="search123">
+      <input type="text" id="modalInput" placeholder="음식 정보를 입력하세요">
+      <button id="modalButton">검색</button>
+    </div>
     <!-- 모달 -->
 
   </div>
@@ -481,24 +491,68 @@
 
   //chatbot
 
-  $("#recommendationButton").click(function(){
-    var user_input = $("#recommendationInput").val();
+  $('#searchButton12').click(function () {
+    var user_input = $('#searchInput12').val();  // 사용자 입력값을 가져옵니다.
     $.ajax({
-        url: '/chatbot/',
-        type: 'GET',
-        data: {
-            'user_input': user_input
-        },
-        success: function(data) {
-            console.log(data);
-            // 검색 결과를 모달 팝업에 표시하고, 팝업을 보여줍니다
-            $('#modal-container .chatbot-content').html(data.result);
-            $('#modal-container').show();
-        },
-        // ...
+      url: '/chatbot/',  // 요청을 보낼 URL입니다.
+      type: 'GET',
+      data: {
+        'user_input': user_input
+      },
+      success: function (data) {
+        console.log(data);
+        if(data.message === 'SUCCESS') {
+          $('#modal-container .meal-details-content').text(data.result);
+          $("#modal-container").show();
+        }
+      },      
+      error: function (request, status, error) {
+        console.log('Error fetching data:', error);
+      }
     });
-});
-
+  });
+  
+  $('#assistanceButton').click(function () {
+    var userInput = $('#assistanceInput').val();  // 사용자 입력값을 가져옵니다.
+    $.ajax({
+      url: '/chatbot/assistance/',  // 요청을 보낼 URL입니다.
+      type: 'GET',
+      data: {
+        'user_input': userInput
+      },
+      success: function (data) {
+        console.log(data);
+        if(data.message === 'SUCCESS') {
+          $('#modal-container .meal-details-content').text(data.result);
+          $("#modal-container").show();
+        }
+      },
+      error: function (request, status, error) {
+        console.log('Error fetching data:', error);
+      }
+    });
+  });
+  
+  $('#modalButton').click(function () {
+    var userInput = $('#modalInput').val();  // 사용자 입력값을 가져옵니다.
+    $.ajax({
+      url: '/chatbot/assistance/',  // 요청을 보낼 URL입니다.
+      type: 'GET',
+      data: {
+        'user_input': userInput
+      },
+      success: function (data) {
+        console.log(data);
+        if(data.message === 'SUCCESS') {
+          $('#modal-container .meal-details-content').text(data.result);
+        }
+      },
+      error: function (request, status, error) {
+        console.log('Error fetching data:', error);
+      }
+    });
+  });
+  
   
 </script>
 
