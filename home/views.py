@@ -10,6 +10,8 @@ from django.http import HttpResponse
 from django.views import View
 from home import models
 from home import tokens
+from django.http import HttpRequest, QueryDict
+from dotenv import load_dotenv
 
 from langchain.prompts import PromptTemplate
 
@@ -20,13 +22,30 @@ from langchain.llms import OpenAI
 from langchain.chains import ConversationChain
 
 from langchain.chat_models import ChatOpenAI
+from langchain.chat_models import ChatOpenAI
+
+from PIL import Image, ImageOps
+import io
+import numpy as np
+import keras.utils as image
+import tensorflow as tf
+from tensorflow import keras
+from keras.preprocessing import image
+from keras.preprocessing.image import load_img, img_to_array
+from keras.utils import load_img, img_to_array
+from tensorflow.keras.models import load_model
+from home.models import load_keras_model
+from keras.models import load_model
 
 
 # Create your views here.
 
-# return HttpResponse("HttpResponse : /home/templates/welcome_home.html.")
+# load_dotenv takes .env path as an argument
+load_dotenv("D:\project\dishcovery\dishcovery\.env")
 
 # return HttpResponse("HttpResponse : /home/templates/home.html.")
+
+
 def main_home(request):
     return render(request, 'home.html')
 
@@ -217,8 +236,9 @@ chat_model = ChatOpenAI()
 
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
 
-Llm = OpenAI(temperature=0, max_tokens = 1000, model_name='gpt-4')
+Llm = OpenAI(temperature=0, max_tokens=1000, model_name='gpt-4')
 Conversation = ConversationChain(llm=Llm, verbose=True)
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 def food_recommendation(request):
@@ -254,8 +274,6 @@ def food_recommendation(request):
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
 
-
-
 @method_decorator(csrf_exempt, name='dispatch')
 def food_assistance(request):
     global Conversation
@@ -274,3 +292,113 @@ def food_assistance(request):
             return JsonResponse({'message': 'INCORRECT_API_KEY'}, status=405)
     else:
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
+
+# 이미지 분류 모델을 사용하여 음식을 분류하는 API
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+def classify_image(request):
+    try:
+        if request.method == 'POST':
+            # Load the model
+            model = load_model(os.getenv("MODEL_PATH"), compile=False)
+
+            # Load the labels
+            class_names = open(os.getenv("LABELS_PATH"), "r",
+                               encoding='utf-8').readlines()
+
+            # Create the array of the right shape to feed into the keras model
+            data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
+
+            # Get the image file from the POST request
+            image_file = request.FILES['image']
+
+            # Open the image file and convert it to RGB
+            image = Image.open(image_file).convert("RGB")
+
+            # Resize and crop the image
+            size = (224, 224)
+            image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
+
+            # Turn the image into a numpy array
+            image_array = np.asarray(image)
+
+            # Normalize the image
+            normalized_image_array = (
+                image_array.astype(np.float32) / 127.5) - 1
+
+            # Load the image into the array
+            data[0] = normalized_image_array
+
+            # Predicts the model
+            prediction = model.predict(data)
+            index = np.argmax(prediction)
+            # strip() to remove leading/trailing white spaces
+            class_name = class_names[index].strip()
+            # remove the number part
+            class_name = ' '.join(class_name.split()[1:])
+            confidence_score = prediction[0][index]
+
+            # Call the Search_food function with the result
+            # 'name' can be replaced with the appropriate tag
+            search_result = Search_food(request, class_name, 'name')
+
+            return search_result
+
+        else:
+            return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
+    except Exception as e:
+        return JsonResponse({'message': 'ERROR_OCCURED', 'error': str(e)}, status=500)
+
+
+def rcpHandler_image(keyword, tag):
+    if tag == 'name':
+        url = os.getenv('FOOD_URL') + os.getenv('RCP_NAME') + keyword
+    elif tag == 'type':
+        url = os.getenv('FOOD_URL') + os.getenv('RCP_TYPE') + keyword
+    response = requests.get(url)
+    res = json.loads(response.text)
+    rcp = res['COOKRCP01']
+    return rcp
+
+
+# 이미지 분류 모델을 통해 예측한 음식 이름을 받아서 음식의 영양 정보를 반환하는 API
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+def Search_food(request, keyword=None, tag=None):
+    if not keyword or not tag:
+        if (request.method == 'GET'):
+            keyword = request.GET.get('tag')
+            tag = request.GET.get('tag')
+
+    if not keyword or not tag:
+        return JsonResponse({'message': 'NO_KEY'}, status=400)
+    try:
+        rcp = rcpHandler_image(keyword, tag)
+        print("rcp:", rcp)  # Add this line to print the 'rcp' object
+    except:
+        return JsonResponse({'message': 'API_ERR'}, status=404)
+
+    try:
+        msg = rcp['RESULT']['MSG']
+    except TypeError:
+        msg = "Unexpected value for 'RESULT': " + str(rcp['RESULT'])
+
+    try:
+        if rcp['total_count'] == '0':
+            return JsonResponse({'message': msg}, status=400)
+        else:
+            count = rcp['total_count']
+    except TypeError:
+        return JsonResponse({'message': "Unexpected value for 'total_count': " + str(rcp['total_count'])}, status=400)
+
+    rcp_row = rcp['row']
+    rowsList = []
+    for row in rcp_row:
+        name = row.get('RCP_NM', None)
+        image = row.get('ATT_FILE_NO_MK', None)
+        seq = row.get('RCP_SEQ', None)
+        rowsList.append({'name': name, 'image': image, 'seq': seq})
+
+    return JsonResponse({'message': msg, 'total_count': count, 'row': rowsList}, status=200)

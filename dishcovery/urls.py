@@ -19,6 +19,7 @@ from django.urls import path
 from home import views
 from django.conf.urls.static import static
 from django.conf import settings
+from home.views import classify_image
 
 app_name = 'home'
 
@@ -33,8 +34,11 @@ urlpatterns = [
     path('token/refresh/', views.token_refresh, name='token_refresh'),
 
     path('chatbot/', views.food_recommendation, name='token_refresh'),
-    path('chatbot/assistance/', views.food_assistance, name='token_refresh')
+    path('chatbot/assistance/', views.food_assistance, name='token_refresh'),
+    path('classify_image/', views.classify_image, name='classify_image'),
+    path('food_search/', views.Search_food, name='food_search'),
     #    path('logIn', views.logIn),
 ]
 if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)
