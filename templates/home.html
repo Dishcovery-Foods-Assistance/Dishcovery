@@ -1,559 +1,482 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <!-- jQuery library -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <!-- Bootstrap JS -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-
-  <!-- ======================================= -->
-  <style>
-    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
-
-    /* @media screen and (min-width:1024px) {
-      body {
-        display: flex;
+  <head>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- ======================================= -->
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
       }
-    } */
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
-    }
+      body {
+        background-color: rgb(255, 255, 255);
+        flex-basis: calc(100% - 20px);
+        max-width: calc(100% - 20px);
+      }
 
-    body {
-      background-color: rgb(255, 255, 255);
-      flex-basis: calc(100% - 20px);
-      max-width: calc(100% - 20px);
-    }
+      header {
+        background-color: #ffffff;
+        color: #000000;
+        text-align: center;
+        padding: 100px 50px 30px;
+      }
 
-    header {
-      background-color: #ffffff;
-      color: #000000;
-      text-align: center;
-      padding: 100px 50px 30px;
-    }
+      span {
+        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        padding: 15px 0px 15px;
+      }
 
-    span {
-      font-size: 20px;
-      display: flex;
-      justify-content: center;
-      padding: 15px 0px 15px;
-    }
+      .title-container {
+        position: relative;
+        justify-content: center;
+        padding-bottom: 20px;
+      }
 
+      .title-container img,
+      .title-container h1 {
+        margin: 0 0px;
+        vertical-align: middle;
+        display: inline-block;
+      }
 
-    .title-container {
+      .title-container img {
+        width: 100px;
+        height: 100px;
+      }
 
-      position: relative;
-      justify-content: center;
-      padding-bottom: 20px;
+      .title-container h1 {
+        font-size: 100px;
+        font-weight: 600;
+      }
 
-    }
-
-    .title-container img {
-      width: 100px;
-      height: 100px;
-      vertical-align: middle;
-      display: inline-block;
-
-    }
-
-    .title-container h1 {
-      font-size: 100px;
-      font-weight: 600;
-      vertical-align: middle;
-      display: inline-block;
-
-    }
-
-    .title-container h1,
-    .title-container img {
-      margin: 0 0px;
-      /* 좌우 여백을 10px로 수정 */
-      vertical-align: middle;
-      display: inline-block;
-    }
-
-
-    .search {
-      display: flex;
-      justify-content: center;
-    }
-
-    .search input {
-      padding: 10px;
-      background-color: #eaf6ff;
-      border: none;
-      width: 40%;
-      font-size: 15px;
-      outline: none;
-      border-radius: 10px 0 0 10px;
-    }
-
-    .search button {
-      padding: 10px 20px;
-      background-color: #51c751;
-      border: none;
-      width: 10%;
-      cursor: pointer;
-      font-size: 15px;
-      color: #fff;
-      font-weight: 600;
-      border-radius: 0 10px 10px 0;
-      transition: all 0.3s ease;
-    }
-
-    .search button:hover {
-      background-color: #2be09565;
-    }
-
-    .meal-item:hover {
-      transform: scale(1.05);
-    }
-
-    .meal-list {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 50px;
-      height: 400px;
-      margin-top: 5%;
-      box-sizing: border-box;
-      /* 여백 포함한 크기로 설정 */
-    }
-
-    .meal-item {
-      width: 400px;
-      /* 원하는 가로 크기로 조절하세요 */
-      height: 400px;
-      /* 원하는 세로 크기로 조절하세요 */
-      border-radius: 50%;
-      object-fit: cover;
-      margin: 0px;
-      box-shadow: 10px 16px 24px rgba(124, 130, 136, 0.2);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background-color: #fcfffc;
-      gap: 80px;
-      display: flex;
-      flex-direction: column;
-      box-sizing: border-box;
-      padding: 10px;
-    }
-
-    .meal-item:hover {
-      transform: scale(1.05);
-    }
-
-    .meal-item img {
-      width: 280px;
-      height: 280px;
-      border-radius: 100%;
-      margin-left: 10%;
-      margin-top: 10px;
-      margin-bottom: -60px;
-      object-fit: cover;
-    }
-
-    .meal-item h3 {
-      text-align: center;
-      font-size: 19px;
-      font-weight: 600;
-      margin-top: -5px;
-      word-break: keep-all;
-    }
-
-
-    .modal-container {
-      display: block;
-      width: 40%;
-      height: 95%;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #fff;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      z-index: 1000;
-      max-width: 60%;
-      overflow: auto;
-      border-radius: 10px;
-      
-    }
-
-    .modal-container .close-button {
-      font-size: 42px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #333;
-      width: 100%;
-      text-align: right;
-      margin-bottom: 16px;
-      transition: all 0.3s ease;
-    }
-
-    .modal-container .close-button:hover {
-      color: #ff5722;
-    }
-
-    
-    
-    .modal-container {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #fff;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      z-index: 1000;
-      max-width: 60%;
-      overflow: auto;
-      border-radius: 10px;
-    }
-    .modal-item{
-      width: 280px;
-      height: 280px;
-      border-radius: 100%;
-      margin-left: 10%;
-      margin-top: 10px;
-      margin-bottom: -60px;
-      object-fit: cover;
-    }
-
-    .modal-container .close-button {
-      font-size: 24px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #333;
-      width: 100%;
-      text-align: right;
-      margin-bottom: 16px;
-      transition: all 0.3s ease;
-    }
-
-    .modal-container .close-button:hover {
-      color: #ff5722;
-    }
-
-    .meal-details-content {
-      overflow-y: auto;
-      height: 70vh;
-      max-height: 90vh;
-    }
-
-    .chatbot-content {
-      overflow-y: auto;
-      height: 70vh;
-      max-height: 90vh;
-    }
-
-    @media screen and (width < 980px) {
-
-      .search checklist {
-        width: 5%;
+      .search {
+        display: flex;
+        justify-content: center;
       }
 
       .search input {
-        width: 75%;
+        padding: 10px;
+        background-color: #eaf6ff;
+        border: none;
+        width: 40%;
+        font-size: 15px;
+        outline: none;
+        border-radius: 10px 0 0 10px;
       }
 
       .search button {
-        width: 20%;
+        padding: 10px 20px;
+        background-color: #51c751;
+        border: none;
+        width: 10%;
+        cursor: pointer;
+        font-size: 15px;
+        color: #fff;
+        font-weight: 600;
+        border-radius: 0 10px 10px 0;
+        transition: all 0.3s ease;
       }
-    }
+
+      .search button:hover {
+        background-color: #2be09565;
+      }
+
+      .meal-list {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 50px;
+        height: 400px;
+        margin-top: 5%;
+        box-sizing: border-box;
+      }
+
+      .meal-item:hover {
+        transform: scale(1.05);
+      }
+
+      .meal-item {
+        width: 400px;
+        height: 400px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0px;
+        box-shadow: 10px 16px 24px rgba(124, 130, 136, 0.2);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background-color: #fcfffc;
+        gap: 80px;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        padding: 10px;
+      }
+
+      .meal-item img {
+        width: 280px;
+        height: 280px;
+        border-radius: 100%;
+        margin-left: 10%;
+        margin-top: 10px;
+        margin-bottom: -60px;
+        object-fit: cover;
+      }
+
+      .meal-item h3 {
+        text-align: center;
+        font-size: 19px;
+        font-weight: 600;
+        margin-top: -5px;
+        word-break: keep-all;
+      }
+
+      .modal-container {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        max-width: 60%;
+        overflow: auto;
+        border-radius: 10px;
+      }
+
+      .modal-item {
+        width: 280px;
+        height: 280px;
+        border-radius: 100%;
+        margin-left: 10%;
+        margin-top: 10px;
+        margin-bottom: -60px;
+        object-fit: cover;
+      }
+
+      .modal-container .close-button {
+        font-size: 24px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #333;
+        width: 100%;
+        text-align: right;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+      }
+
+      .modal-container .close-button:hover {
+        color: #ff5722;
+      }
+
+      .meal-details-content,
+      .chatbot-content {
+        overflow-y: auto;
+        height: 70vh;
+        max-height: 90vh;
+      }
+
+      @media screen and (width < 980px) {
+        .search checklist {
+          width: 5%;
+        }
+
+        .search input {
+          width: 75%;
+        }
+
+        .search button {
+          width: 20%;
+        }
+      }
 
     @media screen and (width < 540px) {}
-  </style>
-</head>
-
-<body>
-  <header>
-    <div class="title-container">
-      <h1 id="titleH1">Dishcovery</h1>
-      <img id="titleImg"
-        src="https://postfiles.pstatic.net/MjAyMzEwMTlfNzQg/MDAxNjk3NzExNjg0MjE1.WKyWNqlVtfVbmJe2hHUielq8AyVUin__KCUuBiGC7uEg.VYNmaIKJWmcsMHrFoj3giU-pV1nyqZiN1k_myxuVl9og.PNG.jimindk/plate.png?type=w773">
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="title-container">
+        <h1 id="titleH1">Dishcovery</h1>
+        <img
+          id="titleImg"
+          src="https://postfiles.pstatic.net/MjAyMzEwMTlfNzQg/MDAxNjk3NzExNjg0MjE1.WKyWNqlVtfVbmJe2hHUielq8AyVUin__KCUuBiGC7uEg.VYNmaIKJWmcsMHrFoj3giU-pV1nyqZiN1k_myxuVl9og.PNG.jimindk/plate.png?type=w773"
+        />
+      </div>
+      <div class="search">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="음식명 혹은 종류를 입력하세요"
+        />
+        <select id="tagSelect">
+          <option value="name">음식명으로 검색</option>
+          <option value="type">음식종류로 검색</option>
+        </select>
+        <button id="searchButton">검색</button>
+      </div>
+      <form
+        action="/classify_image/"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <input type="file" name="image" />
+        <input type="submit" value="Upload" />
+      </form>
+      <div id="result"></div>
+      <div
+        id="searchBar12"
+        style="
+          position: fixed;
+          bottom: 0;
+          width: 100%;
+          background-color: #f8f8f8;
+          padding: 10px;
+        "
+      >
+        <input
+          type="search"
+          id="searchInput12"
+          placeholder="Enter a foodName..."
+          style="width: 80%"
+        />
+        <button id="searchButton12" style="width: 15%">검색</button>
+      </div>
+      <div class="search123">
+        <input
+          type="text"
+          id="assistanceInput"
+          placeholder="음식 정보를 입력하세요"
+        />
+        <button id="assistanceButton">검색</button>
+      </div>
+    </header>
+    <span>Top searches: chicken, soup, ratatouille, pasta</span>
+    <!-- 임시 -->
+    <div id="meal-list" class="meal-list"></div>
+    <div class="modal-container" id="modal-container">
+      <button id="recipeCloseBtn" class="close-button">&times;</button>
+      <div class="meal-details-content" id="meal-details-content"></div>
+      <div class="search123">
+        <input
+          type="text"
+          id="modalInput"
+          placeholder="음식 정보를 입력하세요"
+        />
+        <button id="modalButton">검색</button>
+      </div>
     </div>
-
-    <div class="search">
-      <input type="text" id="searchInput" placeholder="음식명 혹은 종류를 입력하세요">
-      <select id="tagSelect">
-        <option value="name">음식명으로 검색</option>
-        <option value="type">음식종류로 검색</option>
-      </select>
-      <button id="searchButton">검색</button>
-    </div>
-
-    <form action="/classify_image/" method="POST" enctype="multipart/form-data">
-      <input type="file" name="image">
-      <input type="submit" value="Upload">
-    </form>
-
-    <div id="result"></div>
-
-    <div id="searchBar12" style="position: fixed; bottom: 0; width: 100%; background-color: #f8f8f8; padding: 10px;">
-      <input type="search" id="searchInput12" placeholder="Enter a foodName..." style="width: 80%;">
-      <button id="searchButton12" style="width: 15%;">검색</button>
-    </div>
-
-    <div class="search123">
-      <input type="text" id="assistanceInput" placeholder="음식 정보를 입력하세요">
-      <button id="assistanceButton">검색</button>
-    </div>
-
-  </header>
-  <span>Top searches: chicken, soup, ratatouille, pasta</span> <!-- 임시 -->
-  <div id="meal-list" class="meal-list">
-    <!-- search하면 api를 받아오는 동시에 받아오는 양껏 데이터 이미지들 리스트에 뿌리기-->
-
-  </div>
-
-  <div class="modal-container" id="modal-container">
-    <button id="recipeCloseBtn" class="close-button">&times;</button>
-    <div class="meal-details-content" id="meal-details-content">
-    </div>
-    <!-- Content from js will be inserted here -->
-    <div class="search123">
-      <input type="text" id="modalInput" placeholder="음식 정보를 입력하세요">
-      <button id="modalButton">검색</button>
-    </div>
-    <!-- 모달 -->
-
-  </div>
-  </div>
-
-</body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<meta charset="UTF-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dishcovery</title>
-
-<script type="text/javascript">
-
-
-
-  const searchInput = document.getElementById('searchInput');
-  const searchButton = document.getElementById('searchButton');
-  const mealList = document.getElementById('meal-list');
-  const modalContainer = document.querySelector('.modal-container');
-  const modalContainerCopy = document.querySelector('.modal-container-copy');
-  const mealDetailsContent = document.querySelector('.meal-details-content');
-  const mealDetailsRecipe = document.querySelector('.meal-details-recipe');
-  const recipeCloseBtn = document.getElementById('recipeCloseBtn');
-  const recipeCloseBtnCopy = document.getElementById('recipeCloseBtnCopy');
-  const apiEndpoint = 'https://openapi.foodsafetykorea.go.kr/api/2a5f16a58a2d4203a558/COOKRCP01/json';
-  const resultContainer = document.getElementById('resultContainer');
-
-
-
-  $(document).ready(function () {
-    $("#searchInput").keypress(function (e) {
-      //검색어 입력 후 엔터키 입력하면 조회버튼 클릭
-      if (e.keyCode && e.keyCode == 13) {
-        $("#searchButton").trigger("click")
-        return false;
-      }
-      //엔터키 막기
-      if (e.keyCode && e.keyCode == 13) {
-        e.preventDefault();
-      }
-    });
-
-    $("#searchButton").click(function () {
-      var keyword = $("#searchInput").val();
-      var tag = $("#tagSelect").val();
-      $.ajax({
-        url: '/recipe/',
-        type: 'GET',
-        data: {
-          'keyword': keyword,
-          'tag': tag
-        },
-        success: function (data) {
-          console.log(data);
-          var recipeList = '';
-          for (var i = 0; i < data.row.length; i++) {
-            recipeList += '<div class="meal-item" data-seq= "' + data.row[i].seq + '" >';
-            recipeList += '<img src="' + data.row[i].image + '" alt="' + data.row[i].name + '">';
-            recipeList += '<h3>' + data.row[i].name + '</h3></div>';
-          }
-          $('#meal-list').html(recipeList);
-        },
-        error: function (request, status, error) {
-          console.log('Error fetching data:', error);
+  </body>
+  <script>
+    $(document).ready(function () {
+      $("#searchInput").keypress(function (e) {
+        //검색어 입력 후 엔터키 입력하면 조회버튼 클릭
+        if (e.keyCode && e.keyCode == 13) {
+          $("#searchButton").trigger("click");
+          return false;
+        }
+        //엔터키 막기
+        if (e.keyCode && e.keyCode == 13) {
+          e.preventDefault();
         }
       });
-    });
 
-    // 클릭 이벤트 추가
-    $(document).on('click', '.meal-item', function () {
-      var seq = $(this).data('seq');
-      $.ajax({
-        url: '/recipe/detail/',
-        type: 'GET',
-        data: {
-          'keyword': $("#searchInput").val(),
-          'seq': seq
-        },
-        success: function (data) {
-          // 모달 내용 갱신
-          console.log(data);
-          var content = '<img class = modal-item src="' + data.음식사진 + '" alt="' + data.메뉴명 + '">';
-          content += "<h1>" + data.메뉴명 + "</h1>";
-          content += "<h2>영양성분</h2>";
-
-          // 영양성분 데이터를 나열
-          for (var i = 0; i < data.영양성분.length; i++) {
-            content += "<p>열량 : " + data.영양성분[i].열량 + "</p>";
-            content += "<p>탄수화물 : " + data.영양성분[i].탄수화물 + "</p>";
-            content += "<p>단백질 : " + data.영양성분[i].단백질 + "</p>";
-            content += "<p>지방 : " + data.영양성분[i].지방 + "</p>";
-            content += "<p>나트륨 : " + data.영양성분[i].나트륨 + "</p>";
-          }
-
-          content += "<h2>레시피</h2>";
-          console.log(data.레시피.length);
-          // 레시피 이미지를 추가
-          // front-end
-          // front-end
-          for (var i = 0; i < data.레시피.length; i++) {
-            var recipeStep = data.레시피[i];
-            for (var key in recipeStep) {
-                if (recipeStep.hasOwnProperty(key)) {
-                    var recipeContent = recipeStep[key].content ? recipeStep[key].content : '';
-                    var recipeImageUrl = recipeStep[key].image ? recipeStep[key].image : '';
-                    content += "<p>" + recipeContent + "</p>";
-                    if (recipeImageUrl) {
-                        content += '<img src="' + recipeImageUrl + '" alt="Recipe Step ' + (i) + '">';
-                    }
-                }
+      $("#searchButton").click(function () {
+        var keyword = $("#searchInput").val();
+        var tag = $("#tagSelect").val();
+        $.ajax({
+          url: '/recipe/',
+          type: 'GET',
+          data: {
+            'keyword': keyword,
+            'tag': tag
+          },
+          success: function (data) {
+            console.log(data);
+            var recipeList = '';
+            for (var i = 0; i < data.row.length; i++) {
+              recipeList += '<div class="meal-item" data-seq= "' + data.row[i].seq + '" >';
+              recipeList += '<img src="' + data.row[i].image + '" alt="' + data.row[i].name + '">';
+              recipeList += '<h3>' + data.row[i].name + '</h3></div>';
             }
+            $('#meal-list').html(recipeList);
+          },
+          error: function (request, status, error) {
+            console.log('Error fetching data:', error);
           }
+        });
+      });
 
+      // 클릭 이벤트 추가
+      $(document).on('click', '.meal-item', function () {
+        var seq = $(this).data('seq');
+        $.ajax({
+          url: '/recipe/detail/',
+          type: 'GET',
+          data: {
+            'keyword': $("#searchInput").val(),
+            'seq': seq
+          },
+          success: function (data) {
+            // 모달 내용 갱신
+            console.log(data);
+            var content = '<img class = modal-item src="' + data.음식사진 + '" alt="' + data.메뉴명 + '">';
+            content += "<h1>" + data.메뉴명 + "</h1>";
+            content += "<h2>영양성분</h2>";
 
-          $("#modal-container .meal-details-content").html(content);
+            // 영양성분 데이터를 나열
+            for (var i = 0; i < data.영양성분.length; i++) {
+              content += "<p>열량 : " + data.영양성분[i].열량 + "</p>";
+              content += "<p>탄수화물 : " + data.영양성분[i].탄수화물 + "</p>";
+              content += "<p>단백질 : " + data.영양성분[i].단백질 + "</p>";
+              content += "<p>지방 : " + data.영양성분[i].지방 + "</p>";
+              content += "<p>나트륨 : " + data.영양성분[i].나트륨 + "</p>";
+            }
 
-          // 모달 표시
-          $("#modal-container").show();
-        },
-        error: function (request, status, error) {
-          console.log('Error fetching data:', error);
-        }
+            content += "<h2>레시피</h2>";
+            console.log(data.레시피.length);
+            // 레시피 이미지를 추가
+            // front-end
+            // front-end
+            for (var i = 0; i < data.레시피.length; i++) {
+              var recipeStep = data.레시피[i];
+              for (var key in recipeStep) {
+                if (recipeStep.hasOwnProperty(key)) {
+                  var recipeContent = recipeStep[key].content ? recipeStep[key].content : '';
+                  var recipeImageUrl = recipeStep[key].image ? recipeStep[key].image : '';
+                  content += "<p>" + recipeContent + "</p>";
+                  if (recipeImageUrl) {
+                    content += '<img src="' + recipeImageUrl + '" alt="Recipe Step ' + (i) + '">';
+                  }
+                }
+              }
+            }
+
+            $("#modal-container .meal-details-content").html(content);
+
+            // 모달 표시
+            $("#modal-container").show();
+          },
+          error: function (request, status, error) {
+            console.log('Error fetching data:', error);
+          }
+        });
       });
     });
-  });
-
 
   $('form').on('submit', function(e) {
-    e.preventDefault();  // 기본 submit 동작을 방지합니다.
+      e.preventDefault();  // 기본 submit 동작을 방지합니다.
 
-    var formData = new FormData();
-    formData.append('image', $('input[type=file]')[0].files[0]);  // 이미지 파일을 FormData에 추가합니다.
+      var formData = new FormData();
+      formData.append('image', $('input[type=file]')[0].files[0]);  // 이미지 파일을 FormData에 추가합니다.
 
-    $.ajax({
+      $.ajax({
         url: '/classify_image/',  // 요청을 보낼 URL입니다.
         type: 'POST',
         data: formData,
         processData: false,  // 이 옵션을 false로 설정해야 FormData를 제대로 전송할 수 있습니다.
         contentType: false,  // 이 옵션을 false로 설정해야 FormData를 제대로 전송할 수 있습니다.
         success: function(data) {
-            console.log(data);
-            var foodList = '';
-            for (var i = 0; i < data.row.length; i++) {
-                foodList += '<div class="meal-item" data-seq= "' + data.row[i].seq + '" >';
-                foodList += '<img src="' + data.row[i].image + '" alt="' + data.row[i].name + '">';
-                foodList += '<h3>' + data.row[i].name + '</h3></div>';
-            }
-            $('#meal-list').html(foodList);
-        },
-        error: function(request, status, error) {
+          console.log(data);
+          var foodList = '';
+          for (var i = 0; i < data.row.length; i++) {
+            foodList += '<div class="meal-item" data-seq= "' + data.row[i].seq + '" >';
+            foodList += '<img src="' + data.row[i].image + '" alt="' + data.row[i].name + '">';
+            foodList += '<h3>' + data.row[i].name + '</h3></div>';
+          }
+          $('#meal-list').html(foodList);
+                },
+      error: function(request, status, error) {
             console.log('Error fetching data:', error);
         }
     });
-});
+    });
 
-
+    
   $(document).on('click', '.close-button', function () {
-    // 모달 닫기
-    $("#modal-container").hide();
-  });
-
-  //chatbot
-
-  $('#searchButton12').click(function () {
-    var user_input = $('#searchInput12').val();  // 사용자 입력값을 가져옵니다.
-    $.ajax({
-      url: '/chatbot/',  // 요청을 보낼 URL입니다.
-      type: 'GET',
-      data: {
-        'user_input': user_input
-      },
-      success: function (data) {
-        console.log(data);
-        if(data.message === 'SUCCESS') {
-          $('#modal-container .meal-details-content').text(data.result);
-          $("#modal-container").show();
-        }
-      },      
-      error: function (request, status, error) {
-        console.log('Error fetching data:', error);
-      }
+      // 모달 닫기
+      $("#modal-container").hide();
     });
-  });
-  
-  $('#assistanceButton').click(function () {
-    var userInput = $('#assistanceInput').val();  // 사용자 입력값을 가져옵니다.
-    $.ajax({
-      url: '/chatbot/assistance/',  // 요청을 보낼 URL입니다.
-      type: 'GET',
-      data: {
-        'user_input': userInput
-      },
-      success: function (data) {
-        console.log(data);
-        if(data.message === 'SUCCESS') {
-          $('#modal-container .meal-details-content').text(data.result);
-          $("#modal-container").show();
-        }
-      },
-      error: function (request, status, error) {
-        console.log('Error fetching data:', error);
-      }
-    });
-  });
-  
-  $('#modalButton').click(function () {
-    var userInput = $('#modalInput').val();  // 사용자 입력값을 가져옵니다.
-    $.ajax({
-      url: '/chatbot/assistance/',  // 요청을 보낼 URL입니다.
-      type: 'GET',
-      data: {
-        'user_input': userInput
-      },
-      success: function (data) {
-        console.log(data);
-        if(data.message === 'SUCCESS') {
-          $('#modal-container .meal-details-content').text(data.result);
-        }
-      },
-      error: function (request, status, error) {
-        console.log('Error fetching data:', error);
-      }
-    });
-  });
-  
-  
-</script>
 
+    //chatbot
+
+    $('#searchButton12').click(function () {
+      var user_input = $('#searchInput12').val();  // 사용자 입력값을 가져옵니다.
+      $.ajax({
+        url: '/chatbot/',  // 요청을 보낼 URL입니다.
+        type: 'GET',
+        data: {
+          'user_input': user_input
+        },
+        success: function (data) {
+          console.log(data);
+          if(data.message === 'SUCCESS') {
+            $('#modal-container .meal-details-content').text(data.result);
+            $('#modal-container').show();
+          }
+        },
+        error: function (request, status, error) {
+          console.log('Error fetching data:', error);
+        }
+      });
+    });
+
+    $('#assistanceButton').click(function () {
+      var userInput = $('#assistanceInput').val();  // 사용자 입력값을 가져옵니다.
+      $.ajax({
+        url: '/chatbot/assistance/',  // 요청을 보낼 URL입니다.
+        type: 'GET',
+        data: {
+          'user_input': userInput
+        },
+        success: function (data) {
+          console.log(data);
+          if(data.message === 'SUCCESS') {
+            $('#modal-container .meal-details-content').text(data.result);
+            $("#modal-container").show();
+          }
+        },
+        error: function (request, status, error) {
+          console.log('Error fetching data:', error);
+        }
+      });
+    });
+
+    $('#modalButton').click(function () {
+      var userInput = $('#modalInput').val();
+      $.ajax({
+        url: '/chatbot/assistance/',  // 요청을 보낼 URL입니다.
+        type: 'GET',
+        data: {
+          'user_input': userInput
+        },
+        success: function (data) {
+          console.log(data);
+          if(data.message === 'SUCCESS') {
+            $('#modal-container .meal-details-content').text(data.result);
+          }
+        },
+        error: function (request, status, error) {
+          console.log('Error fetching data:', error);
+        }
+    });
+});
+  
+  
+  </script>
 </html>
