@@ -1,3 +1,6 @@
+from django.db import models
+
+# Create your models here.
 import pymysql
 from dotenv import load_dotenv
 import os
@@ -10,7 +13,7 @@ load_dotenv()
 
 
 def load_keras_model():
-    model_path = 'D:/project/dishcovery/dishcovery/Dishcovery_MobileNet5532.h5'
+    model_path = 'C:/dishcovery/dishcovery/Dishcovery_MobileNet5532.h5'
     model = load_model(model_path)
     return model
 
@@ -43,7 +46,7 @@ def food_search(category, keyword):
     conn.close()
     return res
 
-
+"""
 def find_user_by_kakao(kakao_id):
     conn = pymysql.connect(host=os.getenv('DB_HOST'), user=os.getenv(
         'DB_USER'), password=os.getenv('DB_PASSWORD'), db=os.getenv('DB_NAME'), charset='utf8')
@@ -68,3 +71,5 @@ def save_user_info(kakao_id, kakao_nickname):
         cur.execute(sql)
         conn.commit()
         conn.close()
+        
+"""

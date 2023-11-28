@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+    {% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/go-dishcovery.css' %}"/>
+    <title>Page with background video | Dishcovery</title>
+
+</head>
+<body>
+    <div class="video-container">
+        <video src="{% static 'videos/bg-food.mp4' %}" autoplay loop playsinline muted></video>
+
+        <header>
+            <h1>Food information <span>Dishcovery</span></h1>
+        </header>
+        <div id="container">
+            <button class="go-dishcovery">
+                <span class="circle" aria-hidden="true">
+                    <span class="icon arrow"></span>
+                </span>
+                <span class="button-text">Go Dishcovery!</span>
+            </button>
+        </div>
+
+        <div class="description">
+            <p>Dishcovery is a customized food information service. You can receive a variety of services through food name, type, and image searches. Find out more about your favorite food in Dishcovery.<br><br>
+            Dishcovery는 맞춤형 식품 정보 서비스입니다. 음식명, 종류, 이미지 검색을 통해 다양한 서비스를 받으실 수 있습니다. Dishcovery에서 좋아하는 음식에 대해 자세히 알아보세요.
+            </p>
+            <p class="copyright">Video Vredit: Be the Observer on <a
+                    href="https://www.pexels.com/ko-kr/video/thetable-3195650/">pexels.com</a></p>
+            </p>
+    </div>
+
+</body>
+</html>

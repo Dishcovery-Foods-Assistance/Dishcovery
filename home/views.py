@@ -8,8 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.http import HttpResponse
 from django.views import View
-from home import models
-from home import tokens
+from foods import models
 from django.http import HttpRequest, QueryDict
 from dotenv import load_dotenv
 
@@ -34,14 +33,14 @@ from keras.preprocessing import image
 from keras.preprocessing.image import load_img, img_to_array
 from keras.utils import load_img, img_to_array
 from tensorflow.keras.models import load_model
-from home.models import load_keras_model
+from foods.models import load_keras_model
 from keras.models import load_model
 
 
 # Create your views here.
 
 # load_dotenv takes .env path as an argument
-load_dotenv("D:\project\dishcovery\dishcovery\.env")
+load_dotenv("C:\dishcovery\dishcovery\.env")
 
 # return HttpResponse("HttpResponse : /home/templates/home.html.")
 
@@ -49,7 +48,7 @@ load_dotenv("D:\project\dishcovery\dishcovery\.env")
 def main_home(request):
     return render(request, 'home.html')
 
-
+"""
 @method_decorator(csrf_exempt, name='dispatch')
 def kakaoLogin(request):
     if (request.method == 'GET'):
@@ -83,7 +82,7 @@ class KakaoCallbackView(View):
 
         user_token = tokens.generate_token(kakao_id)
         return JsonResponse({'message': 'SUCCESS', 'token': user_token}, status=200)
-
+"""
 
 @method_decorator(csrf_exempt, name='dispatch')
 def dbSearch(request):
@@ -203,7 +202,7 @@ def foodDetail(request):
     else:
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
 
-
+"""
 @method_decorator(csrf_exempt, name='dispatch')
 def verify_token(request):
     if (request.method == 'GET'):
@@ -230,7 +229,7 @@ def token_refresh(request):
         return JsonResponse(res, status=401)
     else:
         return JsonResponse({'message': 'INVALID_HTTP_METHOD'}, status=405)
-
+"""
 
 chat_model = ChatOpenAI()
 
