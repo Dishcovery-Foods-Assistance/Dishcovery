@@ -1,10 +1,18 @@
 import pymysql
 from dotenv import load_dotenv
 import os
+import tensorflow as tf
+from tensorflow.keras.models import load_model
 
 load_dotenv()
 
 # Create your models here.
+
+
+def load_keras_model():
+    model_path = 'D:/project/dishcovery/dishcovery/Dishcovery_MobileNet5532.h5'
+    model = load_model(model_path)
+    return model
 
 
 def food_search(category, keyword):
@@ -55,7 +63,8 @@ def save_user_info(kakao_id, kakao_nickname):
         conn = pymysql.connect(host=os.getenv('DB_HOST'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'),
                                db=os.getenv('DB_NAME'), charset='utf8')
         cur = conn.cursor()
-        sql = "INSERT INTO User (kakaoId, nickName) VALUES ("+str(kakaoid)+", '"+kakaonickname+"');"
+        sql = "INSERT INTO User (kakaoId, nickName) VALUES (" + \
+            str(kakaoid)+", '"+kakaonickname+"');"
         cur.execute(sql)
         conn.commit()
         conn.close()
